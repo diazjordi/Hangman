@@ -1,6 +1,6 @@
-import typer
-from logic_pkg import logic
-from logic_pkg.player import Player
+import sys
+from hangman import logic
+from hangman.player import Player
 
 # Set up game
 player = Player()
