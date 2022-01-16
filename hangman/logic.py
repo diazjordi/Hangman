@@ -1,7 +1,14 @@
 import random
 
+HANGMAN_LOGO = " _\n" + \
+    "| |\n" + \
+    "| |__   __ _ _ __   __ _ _ __ ___   __ _ _ __  \n" + \
+    "| '_ \ / _` | '_ \ / _` | '_ ` _ \ / _` | '_ \ \n" + \
+    "| | | | (_| | | | | (_| | | | | | | (_| | | | |\n" + \
+    "|_| |_|\__,_|_| |_|\__, |_| |_| |_|\__,_|_| |_|\n" + \
+    "                    __/ |                      \n" + \
+    "                   |___/                       \n"
 
-# Puzzle Word List
 WORDS = ('ant baboon badger bat bear beaver camel cat clam cobra cougar '
          'coyote crow deer dog donkey duck eagle ferret fox frog goat '
          'goose hawk lion lizard llama mole monkey moose mouse mule newt '
@@ -24,15 +31,6 @@ PHASES = ["                         +---+\n                         |   |\n     
           "                         +---+\n                         |   |\n                         O   |\n                        /|\  |\n                        /    |\n                             |\n                      =========",
 
           "                         +---+\n                         |   |\n                         O   |\n                        /|\  |\n                        / \  |\n                             |\n                      ========="]
-
-HANGMAN_LOGO = " _\n" + \
-    "| |\n" + \
-    "| |__   __ _ _ __   __ _ _ __ ___   __ _ _ __  \n" + \
-    "| '_ \ / _` | '_ \ / _` | '_ ` _ \ / _` | '_ \ \n" + \
-    "| | | | (_| | | | | (_| | | | | | | (_| | | | |\n" + \
-    "|_| |_|\__,_|_| |_|\__, |_| |_| |_|\__,_|_| |_|\n" + \
-    "                    __/ |                      \n" + \
-    "                   |___/                       \n"
 
 
 # Game Variables
