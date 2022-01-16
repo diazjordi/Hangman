@@ -25,6 +25,16 @@ PHASES = ["                         +---+\n                         |   |\n     
 
           "                         +---+\n                         |   |\n                         O   |\n                        /|\  |\n                        / \  |\n                             |\n                      ========="]
 
+HANGMAN_LOGO = " _\n" + \
+    "| |\n" + \
+    "| |__   __ _ _ __   __ _ _ __ ___   __ _ _ __  \n" + \
+    "| '_ \ / _` | '_ \ / _` | '_ ` _ \ / _` | '_ \ \n" + \
+    "| | | | (_| | | | | (_| | | | | | | (_| | | | |\n" + \
+    "|_| |_|\__,_|_| |_|\__, |_| |_| |_|\__,_|_| |_|\n" + \
+    "                    __/ |                      \n" + \
+    "                   |___/                       \n"
+
+
 # Game Variables
 WORD = ""
 ANSWER = []
@@ -33,12 +43,13 @@ PROGRESS_BAR = []
 
 def game_setup():
     """Sets up new game"""
-    global WORDS, WORD, ANSWER, PROGRESS_BAR
+    global WORDS, WORD, ANSWER, PROGRESS_BAR, HANGMAN_LOGO
     WORD = ""
     ANSWER = []
     PROGRESS_BAR = []
     # Print welcome
-    print("\n\n|---------------------Welcome to Hangman!----------------------|")
+    print("\n\n|---------------------Welcome to Hangman!----------------------|\n")
+    print(HANGMAN_LOGO)
     print("\nWhat ever happens to the person in the gallows is on your hands!\n")
     print("")
     # Set Puzzle Word
