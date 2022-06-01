@@ -16,9 +16,9 @@ def main():
         logic.draw_game_board(player)
         # logic.print_current_hangman(playe
         # Ask player for guess
-        guess = input("      Enter guess: ")
+        guess = input("      Enter guess:  ")
         # Check Guess
-        logic.check_guess(player, guess)
+        logic.check_player_guess(player, guess)
         # Check Game State
         logic.end_game(player)
 

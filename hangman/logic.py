@@ -1,119 +1,137 @@
 import random
+from types import NoneType
+from . import drawings
+from resources import word_processing
 
-HANGMAN_LOGO = " _\n" + \
-    "| |\n" + \
-    "| |__   __ _ _ __   __ _ _ __ ___   __ _ _ __  \n" + \
-    "| '_ \ / _` | '_ \ / _` | '_ ` _ \ / _` | '_ \ \n" + \
-    "| | | | (_| | | | | (_| | | | | | | (_| | | | |\n" + \
-    "|_| |_|\__,_|_| |_|\__, |_| |_| |_|\__,_|_| |_|\n" + \
-    "                    __/ |                      \n" + \
-    "                   |___/                       \n"
-
-WORDS = ('ant baboon badger bat bear beaver camel cat clam cobra cougar '
-         'coyote crow deer dog donkey duck eagle ferret fox frog goat '
-         'goose hawk lion lizard llama mole monkey moose mouse mule newt '
-         'otter owl panda parrot pigeon python rabbit ram rat raven '
-         'rhino salmon seal shark sheep skunk sloth snake spider '
-         'stork swan tiger toad trout turkey turtle weasel whale wolf '
-         'wombat zebra ').split()
-
-# Hangman states
-PHASES = ["                         +---+\n                         |   |\n                             |\n                             |\n                             |\n                             |\n                      =========",
-
-          "                         +---+\n                         |   |\n                         O   |\n                             |\n                             |\n                             |\n                      =========",
-
-          "                         +---+\n                         |   |\n                         O   |\n                         |   |\n                             |\n                             |\n                      =========",
-
-          "                         +---+\n                         |   |\n                         O   |\n                        /|   |\n                             |\n                             |\n                      =========",
-
-          "                         +---+\n                         |   |\n                         O   |\n                        /|\  |\n                             |\n                             |\n                      =========",
-
-          "                         +---+\n                         |   |\n                         O   |\n                        /|\  |\n                        /    |\n                             |\n                      =========",
-
-          "                         +---+\n                         |   |\n                         O   |\n                        /|\  |\n                        / \  |\n                             |\n                      ========="]
-
+# import ASCII drawings
+hangman_logo = drawings.HANGMAN_LOGO
+hangman_phases = drawings.PHASES
+hangman_win = drawings.HANGMAN_WIN
+hangman_loss = drawings.HANGMAN_LOSS
 
 # Game Variables
-WORD = ""
-ANSWER = []
-PROGRESS_BAR = []
-
+puzzle_word = ""
+answer = []
+progress_bar = []
 
 def game_setup():
     """Sets up new game"""
-    global WORDS, WORD, ANSWER, PROGRESS_BAR, HANGMAN_LOGO
-    WORD = ""
-    ANSWER = []
-    PROGRESS_BAR = []
+    global puzzle_word, answer, progress_bar, hangman_logo
     # Print welcome
-    print("\n\n|---------------------Welcome to Hangman!----------------------|\n")
-    print(HANGMAN_LOGO)
-    print("\nWhat ever happens to the person in the gallows is on your hands!\n")
-    print("")
-    # Set Puzzle Word
-    WORD = WORDS[random.randint(0, len(WORDS)-1)]
-    for char in WORD:
-        ANSWER.append(char)
-    # Create progress bar
-    for x in range(len(ANSWER)):
-        PROGRESS_BAR += "_"
+    print_intro()
+    # Ask player for difficulty
+    difficulty = select_puzzle_difficulty()
+    # Generate Word Lists and set puzzle word
+    puzzle_word = generate_puzzle_word(difficulty)
+    answer = [x for x in list(puzzle_word)]
+    progress_bar = ["_" for x in range(len(answer))]
 
+def select_puzzle_difficulty():
+    difficulty = None
+    while True:
+        try:
+            difficulty = int(input("Choose your difficulty\n|--1 for Easy\n|--2 for Moderdate\n|--3 for Difficult\nEnter Choice: "))
+        except:
+            continue
+        else:
+            if difficulty > 3:
+                continue
+            else:
+                break
+    
+    return difficulty
+
+def generate_puzzle_word(difficulty: int):
+    words = word_processing.create_word_lists(None)
+    word = None
+    words_easy = words['easy']
+    words_moderate = words['moderate']
+    words_difficult = words['difficult']
+
+    if difficulty == 1:
+        word = words_easy[random.randint(0, len(words_easy)-1)]
+    elif difficulty == 2:
+        word = words_moderate[random.randint(0, len(words_moderate)-1)]
+    else:
+        word = words_difficult[random.randint(0, len(words_difficult)-1)]
+
+    return word
 
 def draw_game_board(player):
     """Prints current state of Hangman puzzle"""
-    global PHASES
+    global hangman_phases
     # Draw current hangman
-    print(PHASES[len(player.incorrect_guesses)])
+    print(hangman_phases[len(player.incorrect_guesses)])
     # Draw progress bar
-    print("                    ", PROGRESS_BAR)
+    print("                    ", progress_bar)
     # Draw guesses
     print("\n  Correct Guesses: ", player.correct_guesses)
     print("Incorrect Guesses: ", player.incorrect_guesses)
 
-
-def check_guess(player, guess):
+def check_player_guess(player, guess):
     """Checks guess against answer and stores in Player object"""
-    global ANSWER
-    global PROGRESS_BAR
+    global answer
+    global progress_bar
     correct = False
     guess = guess.lower()
-    for char in ANSWER:
+    # if len(guess) == 1:
+
+    #elif len(guess) > 1:
+    for char in answer:
         if guess == char:
             correct = True
             player.correct_guesses.append(guess)
-            index = ANSWER.index(guess)
-            PROGRESS_BAR.insert(index, guess)  # Insert guess at correct index
-            PROGRESS_BAR.pop(index+1)  # Remove _ at correct index
-            ANSWER.insert(index+1, "_")
-            ANSWER.remove(guess)
+            index = answer.index(guess)
+            progress_bar.insert(answer.index(guess), guess)  # Insert guess at correct index
+            progress_bar.pop(index+1)  # Remove _ at correct index
+            answer.insert(index+1, "_")
+            answer.remove(guess)
             print("Correct Guess!")
             break
     if correct is False:
         print("Incorrect Guess!")
         player.incorrect_guesses.append(guess)
 
-
 def end_game(player):
     # Check game state
-    solve = "".join(PROGRESS_BAR)
-    if solve == WORD:
+    solve = "".join(progress_bar)
+    if solve == puzzle_word:
         print("\n\n\n\n\n\n\n\n")
         print("Congratulations you saved the Hangman!")
         print("\n\n\n\n\n\n\n\n")
-        print("Answer was: ", WORD)
+        print("Answer was: ", puzzle_word)
         print("\n\n\n\n\n\n\n\n")
+        print_outro_win()
         play_again()
         player.reset_player()
-    elif len(player.incorrect_guesses) == len(PHASES)-1:
+    elif len(player.incorrect_guesses) == len(hangman_phases)-1:
         draw_game_board(player)
-        print("\n\n\n\n\n\n\n\n")
+        """ print("\n\n\n\n\n\n\n\n")
         print("You have let the accused Hang!")
         print("\n\n\n\n\n\n\n\n")
         print("Answer was: ", WORD)
-        print("\n\n\n\n\n\n\n\n")
+        print("\n\n\n\n\n\n\n\n") """
+        print_outro_loss()
         play_again()
         player.reset_player()
 
+def print_intro():
+    # Print welcome
+    welcome = "Welcome to Hangman!".center(65,"-")
+    print(welcome)
+    print(hangman_logo)
+    print("\nWhat ever happens to the person in the gallows is on your hands!\n")
+    print("")
+
+def print_outro_win():
+    print("\n" + hangman_win)
+
+def print_outro_loss():
+    print("")
+    print("GAME LOST".center(65," "))
+    print("")
+    print("The accused was hung, you failed them!".center(65,"-"))
+    print("\n" + hangman_loss)
 
 def play_again():
     play_again = input("Would you like to play again?(Y or N): ")
@@ -121,51 +139,3 @@ def play_again():
         game_setup()
     else:
         exit()
-
-
-def print_intro():
-    title = """888\n                                                           
-                888\n                                                           
-                888\n                                                           
-                88888b.  8888b. 88888b.  .d88b. 88888b.d88b.  8888b. 88888b.\n  
-                888  88b     88b888  88bd88P 88b888  888  88b     88b888  88b\n
-                888  888.d888888888  888888  888888  888  888.d888888888  888\n
-                888  888888  888888  888Y88b 888888  888  888888  888888  888\n
-                888  888 Y888888888  888  Y88888888  888  888 Y888888888  888\n
-                                            888\n                              
-                                        Y8b d88P\n                              
-                                        Y88P"""
-    hangman = """   |_______________``\
-                     [/]           [  ]
-                     [\]           | ||
-                     [/]           |  |
-                     [\]           |  |
-                     [/]           || |
-                    [---]          |  |
-                    [---]          |@ |
-                    [---]          |  |
-                   oOOOOOo         |  |
-                  oOO___OOo        | @|
-                 oO/|||||\Oo       |  |
-                 OO/|||||\OOo      |  |
-                 *O\ x x /OO*      |  |
-                 /*|  c  |O*\      |  |
-                    \_O_/    \     |  |
-                     \#/     |     |  |
-                  |       |  |     | ||
-                  |       |  |_____| ||__
-                 _/_______\__|  \  ||||  \
-                 /         \_|\  _ | ||\  \
-                 |    V    |\  \//\  \  \  \
-                 |    |    | __//  \  \  \  \
-                 |    |    |\|//|\  \  \  \  \
-                 ------------\--- \  \  \  \  \
-                 \  \  \  \  \  \  \  \  \  \  \
-                 _\__\__\__\__\__\__\__\__\__\__\
-                __|__|__|__|__|__|__|__|__|__|__|
-                |___| |___|
-                |###/ \###|
-                \##/   \##/
-                 ``     ``"""
-
-    print(title)
